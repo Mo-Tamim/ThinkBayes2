@@ -1,0 +1,51 @@
+import numpy as np
+
+# Define the prior probabilities
+prior_standard = 1/3
+prior_biased_1_2 = 1/3
+prior_biased_5_6 = 1/3
+
+# Define the likelihoods
+def likelihood(hypothesis, roll):
+    if hypothesis == 'standard':
+        return 1/6
+    elif hypothesis == 'biased_1_2':
+        if roll in [1, 2]:
+            return 1/3
+        else:
+            return 1/12
+    elif hypothesis == 'biased_5_6':
+        if roll in [5, 6]:
+            return 1/3
+        else:
+            return 1/12
+
+# Observed rolls
+observations = [1, 2, 3, 4, 5, 6]
+
+# Calculate the posterior probability for each hypothesis
+for roll in observations:
+    # Calculate likelihoods for the current observation
+    likelihood_standard = likelihood('standard', roll)
+    likelihood_biased_1_2 = likelihood('biased_1_2', roll)
+    likelihood_biased_5_6 = likelihood('biased_5_6', roll)
+    
+    # Calculate the evidence (normalizing constant)
+    evidence = (likelihood_standard * prior_standard +
+                likelihood_biased_1_2 * prior_biased_1_2 +
+                likelihood_biased_5_6 * prior_biased_5_6)
+    
+    # Update the posteriors
+    posterior_standard = (likelihood_standard * prior_standard) / evidence
+    posterior_biased_1_2 = (likelihood_biased_1_2 * prior_biased_1_2) / evidence
+    posterior_biased_5_6 = (likelihood_biased_5_6 * prior_biased_5_6) / evidence
+    
+    # Update priors for the next iteration
+    prior_standard = posterior_standard
+    prior_biased_1_2 = posterior_biased_1_2
+    prior_biased_5_6 = posterior_biased_5_6
+
+# Print the final posterior probabilities
+print(f"Posterior probability of the die being standard: {posterior_standard:.4f}")
+print(f"Posterior probability of the die being biased towards 1 and 2: {posterior_biased_1_2:.4f}")
+print(f"Posterior probability of the die being biased towards 5 and 6: {posterior_biased_5_6:.4f}")
